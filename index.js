@@ -1,6 +1,6 @@
 import { JSDOM } from "jsdom";
-import { PdfReader } from "pdfreader";
 import { readFileSync } from "fs";
+import { getDocument } from "pdfjs-dist";
 
 const list = readFileSync("./words.txt", "utf-8").split("\n").filter(x => x);
 let count = {};
@@ -23,25 +23,22 @@ const URL = "https://razgovor.edsoo.ru";
             for(let i = 1; i <= Array.from(documentl.querySelector("div.topic-resources").children).length; i++) {
                 const finalLink = documentl.querySelector(`div.topic-resources > div:nth-child(${i}) > div.topic-resource-group-columns > div:nth-child(1) > a:nth-child(4)`).getAttribute("href");
                 const fp = await fetch(finalLink);
-                const bp = Buffer.from(await fp.arrayBuffer());
+                const bp = await fp.arrayBuffer();
 
                 try {
-                    await new Promise((resolve, reject) => {
-                        new PdfReader().parseBuffer(bp, (err, item) => {
-                            if(err) {
-                                reject(err);
-                            } else if(!item) {
-                                resolve();
-                            } else if(item.text) {
-                                console.clear();
-                                for(let i of list)
-                                    count[i] += (item.text.toLowerCase().match(new RegExp(i, "g")) || []).length;
-                                console.log(count);
-                            }
-                        });
-                    });
-                } catch(_) {}
+                    const pdf = await getDocument(bp).promise;
+                    for(let j = 0; j < pdf.numPages; j++) {
+                        const page = await pdf.getPage(j + 1);
+                        const text = await page.getTextContent();
+                        const str = text.items.map(x => x.str).join(" ").toLowerCase();
+                        for(let k of list)
+                            if(str.includes(k.toLowerCase()))
+                                count[k]++;
+                        console.clear();
+                        console.log(count);
+                    }
+                } catch(e) {console.log(e.stack)}
             }
-        } catch(_) {}
+        } catch(e) {console.log(e.stack)}
     }
 })();
