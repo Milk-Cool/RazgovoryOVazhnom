@@ -1,0 +1,27 @@
+{
+  "name": "razgovoryovazhnom",
+  "version": "0.1.0",
+  "description": "\"Important Talks\" statistics",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Milk-Cool/RazgovoryOVazhnom.git"
+  },
+  "keywords": [
+    "rasgovory"
+  ],
+  "author": "Milk_Cool",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Milk-Cool/RazgovoryOVazhnom/issues"
+  },
+  "homepage": "https://github.com/Milk-Cool/RazgovoryOVazhnom#readme",
+  "dependencies": {
+    "jsdom": "^23.2.0",
+    "pdfreader": "^3.0.2"
+  }
+}
